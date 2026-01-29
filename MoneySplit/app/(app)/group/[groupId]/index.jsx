@@ -132,72 +132,84 @@ const GroupDetails = () => {
                 </View>
 
                 {/* MEMBERS AVATARS */}
-                <View style={tw`mt-8 items-center`}>
-                    <View style={tw`flex-row`}>
-                        {activeMembers.slice(0, 4).map((m, i) => {
-                            const profile = memberProfiles[m.userId];
+                <Pressable
+                    onPress={() =>
+                        router.push({
+                            pathname: `/group/${groupId}/members`,
+                            params: {
+                                members: JSON.stringify(activeMembers),
+                            },
+                        })
+                    }
+                >
 
-                            return (
+                    <View style={tw`mt-8 items-center`}>
+                        <View style={tw`flex-row`}>
+                            {activeMembers.slice(0, 4).map((m, i) => {
+                                const profile = memberProfiles[m.userId];
+
+                                return (
+                                    <View
+                                        key={m.userId}
+                                        style={[
+                                            tw`w-12 h-12 rounded-full overflow-hidden`,
+                                            {
+                                                marginLeft: i === 0 ? 0 : -12,
+                                                borderWidth: 3,
+                                                borderColor: colors.background,
+                                                backgroundColor: colors.surfaceMuted,
+                                            },
+                                        ]}
+                                    >
+                                        {profile?.imageUrl ? (
+                                            <Image
+                                                source={{ uri: profile.imageUrl }}
+                                                style={tw`w-full h-full`}
+                                            />
+                                        ) : (
+                                            <View
+                                                style={tw`flex-1 items-center justify-center`}
+                                            >
+                                                <Ionicons
+                                                    name="person"
+                                                    size={18}
+                                                    color={colors.icon}
+                                                />
+                                            </View>
+                                        )}
+                                    </View>
+                                );
+                            })}
+
+                            {activeMembers.length > 4 && (
                                 <View
-                                    key={m.userId}
                                     style={[
-                                        tw`w-12 h-12 rounded-full overflow-hidden`,
+                                        tw`w-12 h-12 rounded-full items-center justify-center`,
                                         {
-                                            marginLeft: i === 0 ? 0 : -12,
+                                            marginLeft: -12,
+                                            backgroundColor: colors.primary,
                                             borderWidth: 3,
                                             borderColor: colors.background,
-                                            backgroundColor: colors.surfaceMuted,
                                         },
                                     ]}
                                 >
-                                    {profile?.imageUrl ? (
-                                        <Image
-                                            source={{ uri: profile.imageUrl }}
-                                            style={tw`w-full h-full`}
-                                        />
-                                    ) : (
-                                        <View
-                                            style={tw`flex-1 items-center justify-center`}
-                                        >
-                                            <Ionicons
-                                                name="person"
-                                                size={18}
-                                                color={colors.icon}
-                                            />
-                                        </View>
-                                    )}
+                                    <Text
+                                        style={{
+                                            color: colors.primaryText,
+                                            fontWeight: "bold",
+                                        }}
+                                    >
+                                        +{activeMembers.length - 4}
+                                    </Text>
                                 </View>
-                            );
-                        })}
+                            )}
+                        </View>
 
-                        {activeMembers.length > 4 && (
-                            <View
-                                style={[
-                                    tw`w-12 h-12 rounded-full items-center justify-center`,
-                                    {
-                                        marginLeft: -12,
-                                        backgroundColor: colors.primary,
-                                        borderWidth: 3,
-                                        borderColor: colors.background,
-                                    },
-                                ]}
-                            >
-                                <Text
-                                    style={{
-                                        color: colors.primaryText,
-                                        fontWeight: "bold",
-                                    }}
-                                >
-                                    +{activeMembers.length - 4}
-                                </Text>
-                            </View>
-                        )}
+                        <Text style={[tw`mt-2 text-sm`, { color: colors.textSecondary }]}>
+                            {activeMembers.length} active members
+                        </Text>
                     </View>
-
-                    <Text style={[tw`mt-2 text-sm`, { color: colors.textSecondary }]}>
-                        {activeMembers.length} active members
-                    </Text>
-                </View>
+                </Pressable>
 
 
                 {/* SUMMARY CARDS */}
