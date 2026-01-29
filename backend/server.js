@@ -8,6 +8,7 @@ import netAmountRouter from "./routes/netAmount.router.js"
 import searchPersonRouter from "./routes/searchPerson.router.js"
 import friendsRouter from "./routes/friends.router.js"
 import clerkPersonRouter from "./routes/clerkPerson.router.js"
+import upiRouter from "./routes/upiQr.router.js"
 
 /* ---------------- CONFIG ---------------- */
 
@@ -42,6 +43,7 @@ app.use("/api/net", netAmountRouter);
 app.use("/api/search", searchPersonRouter);
 app.use("/api/friend-request", friendsRouter);
 app.use("/api/clerk-search", clerkPersonRouter);
+app.use("/api/user/upi", upiRouter);
 
 /* ---------------- START SERVER ---------------- */
 
