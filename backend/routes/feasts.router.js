@@ -14,6 +14,20 @@ import Group from '../models/group.model.js';
 
 const router = express.Router();
 
+router.get("/:groupId/feasts", async (req, res) => {
+    try {
+        const group = await Group.findById(req.params.groupId)
+            .select("feasts");
+
+        if (!group) {
+            return res.status(404).json({ error: "Group not found" });
+        }
+        res.json(group.feasts);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to fetch feasts" });
+    }
+});
+
 router.post("/:groupId/feasts", async (req, res) => {
     try {
         const { groupId } = req.params;

@@ -5,6 +5,7 @@ import {
     Pressable,
     useColorScheme,
     Alert,
+    Modal,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import tw from "twrnc";
@@ -25,6 +26,7 @@ const CreateGroup = () => {
     const [loading, setLoading] = useState(false);
     const [friends, setFriends] = useState([]);
     const [selectedMembers, setSelectedMembers] = useState([]);
+    const [showAllFriends, setShowAllFriends] = useState(false);
 
     useEffect(() => {
         if (!user?.id) return;
@@ -234,7 +236,8 @@ const CreateGroup = () => {
                     })}
 
                     {friends.length > 4 && (
-                        <View
+                        <Pressable
+                            onPress={() => setShowAllFriends(true)}
                             style={[
                                 tw`w-12 h-12 rounded-full items-center justify-center`,
                                 { backgroundColor: colors.surfaceMuted },
@@ -248,8 +251,9 @@ const CreateGroup = () => {
                             >
                                 +{friends.length - 4}
                             </Text>
-                        </View>
+                        </Pressable>
                     )}
+
                 </View>
             </View>
 
@@ -276,6 +280,84 @@ const CreateGroup = () => {
                     {loading ? "Creating..." : "Create Group"}
                 </Text>
             </Pressable>
+            {/* ALL FRIENDS MODAL */}
+            <Modal
+                visible={showAllFriends}
+                animationType="slide"
+                transparent
+            >
+                <View style={tw`flex-1 justify-end bg-black/40`}>
+                    <View
+                        style={[
+                            tw`max-h-[80%] rounded-t-3xl p-5`,
+                            { backgroundColor: colors.background },
+                        ]}
+                    >
+                        {/* HEADER */}
+                        <View style={tw`flex-row justify-between items-center mb-4`}>
+                            <Text
+                                style={[
+                                    tw`text-lg font-bold`,
+                                    { color: colors.textPrimary },
+                                ]}
+                            >
+                                Add Members
+                            </Text>
+
+                            <Pressable onPress={() => setShowAllFriends(false)}>
+                                <Text
+                                    style={[
+                                        tw`text-base font-semibold`,
+                                        { color: colors.primary },
+                                    ]}
+                                >
+                                    Done
+                                </Text>
+                            </Pressable>
+                        </View>
+
+                        {/* FRIENDS LIST */}
+                        <FlatList
+                            data={friends}
+                            keyExtractor={(item) => item.userId}
+                            showsVerticalScrollIndicator={false}
+                            renderItem={({ item }) => {
+                                const selected = selectedMembers.includes(item.userId);
+
+                                return (
+                                    <Pressable
+                                        onPress={() => toggleMember(item.userId)}
+                                        style={tw`flex-row items-center mb-4`}
+                                    >
+                                        <Image
+                                            source={{ uri: item.imageUrl }}
+                                            style={tw`w-12 h-12 rounded-full mr-3`}
+                                        />
+
+                                        <Text
+                                            style={[
+                                                tw`flex-1 text-base`,
+                                                { color: colors.textPrimary },
+                                            ]}
+                                        >
+                                            {item.fullName || "User"}
+                                        </Text>
+
+                                        {selected && (
+                                            <View
+                                                style={[
+                                                    tw`w-5 h-5 rounded-full`,
+                                                    { backgroundColor: colors.primary },
+                                                ]}
+                                            />
+                                        )}
+                                    </Pressable>
+                                );
+                            }}
+                        />
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 };

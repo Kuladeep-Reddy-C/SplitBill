@@ -12,7 +12,17 @@ import tw from "twrnc";
 import { Ionicons } from "@expo/vector-icons";
 import { theme } from "../../../../constants/Colors";
 import { BACKEND_URL } from "../../../../constants/Imps";
+import { socket } from "../../../../lib/socket";
 import { useUser } from "@clerk/clerk-expo";
+
+const sortFeasts = (list) => {
+    return [...list].sort((a, b) => {
+        if (a.isActive === b.isActive) {
+            return new Date(b.updatedAt) - new Date(a.updatedAt);
+        }
+        return a.isActive ? -1 : 1;
+    });
+};
 
 const GroupDetails = () => {
     const { groupId } = useLocalSearchParams();
@@ -24,6 +34,7 @@ const GroupDetails = () => {
     const [group, setGroup] = useState(null);
     const [loading, setLoading] = useState(true);
     const [memberProfiles, setMemberProfiles] = useState([]);
+    const [feasts, setFeasts] = useState([]);
 
     useEffect(() => {
         if (!groupId) return;
@@ -33,15 +44,67 @@ const GroupDetails = () => {
                 const res = await fetch(`${BACKEND_URL}/api/groups/${groupId}`);
                 const data = await res.json();
                 setGroup(data);
+                fetchFeasts();
             } catch (err) {
                 console.log(err);
             } finally {
                 setLoading(false);
             }
         };
+        const fetchFeasts = async () => {
+            try {
+                const res = await fetch(`${BACKEND_URL}/api/groups/${groupId}/feasts`);
+                const data = await res.json();
+                setFeasts(sortFeasts(data));
+            } catch (e) {
+                console.log("Failed to fetch feasts", e);
+            }
+        };
+
 
         fetchGroup();
     }, [groupId]);
+
+    useEffect(() => {
+        if (!groupId || !user?.id) return;
+
+        socket.connect();
+
+        socket.emit("group:join", {
+            groupId,
+            userId: user.id,
+        });
+
+        socket.on("feast:created", (feast) => {
+            setFeasts((prev) => sortFeasts([feast, ...prev]));
+        });
+
+        socket.on("feast:item-added", ({ feastId }) => {
+            setFeasts((prev) =>
+                sortFeasts(
+                    prev.map((f) =>
+                        f._id === feastId ? { ...f, isActive: true } : f
+                    )
+                )
+            );
+        });
+
+        socket.on("feast:status-updated", ({ feastId, isActive }) => {
+            setFeasts((prev) =>
+                sortFeasts(
+                    prev.map((f) =>
+                        f._id === feastId ? { ...f, isActive } : f
+                    )
+                )
+            );
+        });
+
+        return () => {
+            socket.emit("group:leave", { groupId });
+            socket.off();
+            socket.disconnect();
+        };
+    }, [groupId, user?.id]);
 
     useEffect(() => {
         if (!group?.members?.length) return;
@@ -247,22 +310,60 @@ const GroupDetails = () => {
                     </View>
                 </View>
 
-                {/* FEASTS PLACEHOLDER */}
                 <View style={tw`px-4 mt-10`}>
                     <Text style={[tw`text-sm font-bold uppercase mb-3`, { color: colors.textMuted }]}>
                         Feasts
                     </Text>
 
-                    <View
-                        style={[
-                            tw`rounded-xl p-4`,
-                            { backgroundColor: colors.surfaceMuted, borderWidth: 1, borderColor: colors.border },
-                        ]}
-                    >
-                        <Text style={{ color: colors.textSecondary }}>
-                            No feasts added yet.
-                        </Text>
-                    </View>
+                    {feasts.length === 0 ? (
+                        <View
+                            style={[
+                                tw`rounded-xl p-4`,
+                                { backgroundColor: colors.surfaceMuted, borderWidth: 1, borderColor: colors.border },
+                            ]}
+                        >
+                            <Text style={{ color: colors.textSecondary }}>
+                                No feasts added yet.
+                            </Text>
+                        </View>
+                    ) : (
+                        feasts.map((feast) => (
+                            <Pressable
+                                key={feast._id}
+                                onPress={() => router.push(`/group/${groupId}/feast/${feast._id}`)}
+                                style={[
+                                    tw`mb-3 rounded-xl p-4 flex-row items-center justify-between`,
+                                    {
+                                        backgroundColor: feast.isActive
+                                            ? colors.primarySoft
+                                            : colors.surface,
+                                        borderWidth: 1,
+                                        borderColor: feast.isActive
+                                            ? colors.primary
+                                            : colors.border,
+                                    },
+                                ]}
+                            >
+                                <View>
+                                    <Text style={[tw`font-bold`, { color: colors.textPrimary }]}>
+                                        {feast.name}
+                                    </Text>
+
+                                    {feast.isActive && (
+                                        <Text style={[tw`text-xs mt-1`, { color: colors.primary }]}>
+                                            ● Active now
+                                        </Text>
+                                    )}
+                                </View>
+
+                                <Ionicons
+                                    name="chevron-forward"
+                                    size={18}
+                                    color={colors.icon}
+                                />
+                            </Pressable>
+                        ))
+                    )}
                 </View>
             </ScrollView>
 
