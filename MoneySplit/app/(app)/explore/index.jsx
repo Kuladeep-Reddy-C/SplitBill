@@ -348,7 +348,7 @@ const Index = () => {
                                 }}
                                 style={tw`mt-4`}
                             >
-                                <Text style={tw`text-red-500 text-sm`}>Delete QR</Text>
+                                <Text style={tw`text-red-500 text-sm`}><Ionicons name="trash-sharp" size={24} /></Text>
                             </Pressable>
                         </>
                     ) : (
@@ -384,7 +384,7 @@ const Index = () => {
 
                 <Pressable
                     onPress={() => router.push("/explore/edit-upi")}
-                    style={tw`border rounded-xl px-4 py-3`}
+                    style={tw`border rounded-xl px-4 py-3 items-center`}
                 >
                     <Text>
                         {userNet?.upiId || "Add your UPI ID"}
