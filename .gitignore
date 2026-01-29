@@ -1,0 +1,34 @@
+# Ignore in all directories
+**/node_modules/
+**/.env
+**/.env*.local
+
+# Expo & Build folders
+**/.expo/
+**/dist/
+**/web-build/
+**/expo-env.d.ts
+
+# Native Generated Folders (Explicitly ignore nested ios/android folders)
+**/ios/
+**/android/
+
+# Native Keys and Credentials
+**/*.jks
+**/*.p8
+**/*.p12
+**/*.key
+**/*.mobileprovision
+**/*.pem
+**/.kotlin/
+**/*.orig.*
+
+# Metro & Debug
+**/.metro-health-check*
+**/npm-debug.*
+**/yarn-debug.*
+**/yarn-error.*
+
+# TypeScript & System
+**/*.tsbuildinfo
+**/.DS_Store
