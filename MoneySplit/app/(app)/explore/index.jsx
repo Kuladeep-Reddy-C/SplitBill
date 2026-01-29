@@ -68,7 +68,9 @@ const Index = () => {
                     </TouchableOpacity>
 
                     {/* Notifications */}
-                    <TouchableOpacity
+                    <TouchableOpacity onPress={() => {
+                        router.push('/explore/notifications')
+                    }}
                         style={[
                             tw`w-10 h-10 rounded-full items-center justify-center`,
                             { backgroundColor: colors.surface },
@@ -93,6 +95,9 @@ const Index = () => {
                 >
                     Groups
                 </Text>
+            </View>
+            <View>
+                <Text>Groups</Text>
             </View>
         </View>
     );

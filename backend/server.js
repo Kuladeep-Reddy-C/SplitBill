@@ -6,6 +6,8 @@ import cors from "cors";
 import healthRouter from "./routes/health.router.js";
 import netAmountRouter from "./routes/netAmount.router.js"
 import searchPersonRouter from "./routes/searchPerson.router.js"
+import friendsRouter from "./routes/friends.router.js"
+import clerkPersonRouter from "./routes/clerkPerson.router.js"
 
 /* ---------------- CONFIG ---------------- */
 
@@ -38,6 +40,8 @@ const connectDB = async () => {
 app.use("/health", healthRouter);
 app.use("/api/net", netAmountRouter);
 app.use("/api/search", searchPersonRouter);
+app.use("/api/friend-request", friendsRouter);
+app.use("/api/clerk-search", clerkPersonRouter);
 
 /* ---------------- START SERVER ---------------- */
 
