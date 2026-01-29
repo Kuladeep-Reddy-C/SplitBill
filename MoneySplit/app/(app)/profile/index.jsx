@@ -137,7 +137,7 @@ export default function Profile() {
                 <View
                     style={[
                         tw`flex-1 p-4 rounded-xl`,
-                        { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1 },
+                        { backgroundColor: colors.dangerSoft, borderColor: colors.border, borderWidth: 1 },
                     ]}
                 >
                     <Text style={{ color: colors.textSecondary }}>

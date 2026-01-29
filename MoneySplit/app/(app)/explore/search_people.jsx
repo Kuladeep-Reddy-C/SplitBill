@@ -167,7 +167,7 @@ const SearchPeople = () => {
                                         setShowPreview(true);
                                     }}
                                 >
-                                    <Text style={tw`text-blue-600 font-semibold`}>
+                                    <Text style={[tw`px-3 py-2 text-blue-600 font-semibold rounded-full font-bold`, {color:colors.primaryText, backgroundColor:colors.primary}]}>
                                         View
                                     </Text>
                                 </TouchableOpacity>
