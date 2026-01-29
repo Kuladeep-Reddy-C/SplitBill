@@ -9,7 +9,10 @@ import searchPersonRouter from "./routes/searchPerson.router.js"
 import friendsRouter from "./routes/friends.router.js"
 import clerkPersonRouter from "./routes/clerkPerson.router.js"
 import upiRouter from "./routes/upiQr.router.js"
-import groupRoutes from "./routes/group.router.js";
+import groupRouter from "./routes/group.router.js"
+import membersRouter from "./routes/members.router.js"
+import feastsRouter from "./routes/feasts.router.js"
+import settleRouter from "./routes/settlements.router.js"
 
 /* ---------------- CONFIG ---------------- */
 
@@ -45,7 +48,10 @@ app.use("/api/search", searchPersonRouter);
 app.use("/api/friend-request", friendsRouter);
 app.use("/api/clerk-search", clerkPersonRouter);
 app.use("/api/user/upi", upiRouter);
-app.use("/api/groups", groupRoutes);
+app.use("/api/groups", groupRouter);
+app.use("/api/groups", membersRouter);
+app.use("/api/groups", feastsRouter);
+app.use("/api/groups", settleRouter);
 
 /* ---------------- START SERVER ---------------- */
 

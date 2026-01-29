@@ -1,5 +1,5 @@
 import express from 'express'
-import Group from '../models/group.model';
+import Group from '../models/group.model.js';
 
 // 3️⃣ SETTLEMENT ROUTER(THE LEDGER)
 // 🧠 What settlement really is

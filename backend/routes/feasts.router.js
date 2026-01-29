@@ -1,5 +1,5 @@
 import express from 'express'
-import Group from '../models/group.model';
+import Group from '../models/group.model.js';
 
 // ➕ Add feast(expense)
 // POST / groups /: groupId / feasts
@@ -72,3 +72,6 @@ router.post("/:groupId/feasts", async (req, res) => {
 // ✔ No feast deletion
 // ✔ Append - only
 // ✔ All math stored
+
+
+export default router;
