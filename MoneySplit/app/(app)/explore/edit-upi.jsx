@@ -24,9 +24,6 @@ const EditUpi = () => {
                 upiId,
             }),
         });
-
-        console.log(resp);
-
         router.back();
     };
 

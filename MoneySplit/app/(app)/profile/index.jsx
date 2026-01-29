@@ -30,7 +30,6 @@ export default function Profile() {
                 if (!res.ok) throw new Error("Failed to fetch");
 
                 const data = await res.json();
-                console.log("Fetched balance:", data);
 
                 setOwed(data.owed ?? 0);
                 setLent(data.lent ?? 0);

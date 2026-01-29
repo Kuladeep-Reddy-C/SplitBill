@@ -32,7 +32,6 @@ const GroupDetails = () => {
             try {
                 const res = await fetch(`${BACKEND_URL}/api/groups/${groupId}`);
                 const data = await res.json();
-                console.log("data", data);
                 setGroup(data);
             } catch (err) {
                 console.log(err);

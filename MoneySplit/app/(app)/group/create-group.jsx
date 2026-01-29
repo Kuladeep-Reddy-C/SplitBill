@@ -40,9 +40,6 @@ const CreateGroup = () => {
                     (f) => f.requestStatus === "accepted"
                 );
 
-                console.log("json", json);
-                console.log("acc", accepted);
-
                 // fetch user profiles
                 const profiles = await Promise.all(
                     accepted.map(async (f) => {

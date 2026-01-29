@@ -44,12 +44,9 @@ const Index = () => {
             if (resp) {
                 setUserNet(resp);
             }
-            console.log(resp);
         }
         fetchUserData();
     }, [isLoaded, user?.id]);
-
-    console.log(user?.unsafeMetadata);
     if (!isLoaded) {
         return (
             <View style={tw`flex-1 items-center justify-center`}>
