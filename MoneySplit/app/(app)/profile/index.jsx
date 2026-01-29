@@ -229,7 +229,7 @@ export default function Profile() {
                 {/* Sign Out */}
                 <View style={tw`items-center mt-8`}>
                     <TouchableOpacity
-                        style={[tw`p-4 rounded-2xl w-[80%]`, { backgroundColor: colors.dangerSoft }]}
+                        style={[tw`p-4 rounded-full w-[80%]`, { backgroundColor: colors.dangerSoft }]}
                         onPress={handleSignOut}
                     >
                         <Text style={[tw`text-center font-bold`, { color: colors.danger }]}>

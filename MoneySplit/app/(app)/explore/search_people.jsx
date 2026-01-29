@@ -8,6 +8,7 @@ import {
     Keyboard,
     Image,
     ScrollView,
+    Pressable,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import tw from 'twrnc';
@@ -174,6 +175,35 @@ const SearchPeople = () => {
                         ))}
                     </View>
                 )}
+
+                <View style={tw`flex-1`}>
+                    {/* Absolute top button */}
+                    <View style={tw`absolute top-130 left-0 right-0 items-center z-10`}>
+                        <Pressable
+                            style={[
+                                tw`px-4 py-4 rounded-full flex-row items-center justify-center`,
+                                {
+                                    width: "90%",
+                                    backgroundColor: colors.primary,
+                                },
+                            ]}
+                        >
+                            <Ionicons
+                                name="share-social"
+                                size={24}
+                                color={colors.primaryText}
+                            />
+                            <Text
+                                style={[
+                                    tw`ml-2 text-base font-semibold`,
+                                    { color: colors.primaryText },
+                                ]}
+                            >
+                                Share Via Link
+                            </Text>
+                        </Pressable>
+                    </View>
+                </View>
 
                 {/* Preview Modal */}
                 <UserPreviewCard

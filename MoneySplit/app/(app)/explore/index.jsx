@@ -4,6 +4,7 @@ import {
     Image,
     useColorScheme,
     TouchableOpacity,
+    Pressable,
 } from "react-native";
 import React, { useEffect } from "react";
 import { useUser, useAuth } from "@clerk/clerk-expo";
@@ -45,10 +46,15 @@ const Index = () => {
             {/* Header */}
             <View style={tw`flex-row justify-between items-center`}>
                 {/* Profile image */}
-                <Image
-                    source={{ uri: user.imageUrl }}
-                    style={tw`w-12 h-12 rounded-full`}
-                />
+                <Pressable onPress={() => {
+                    router.push('/profile')
+                }}>
+                    <Image
+                        source={{ uri: user.imageUrl }}
+                        style={tw`w-10 h-10 rounded-full`}
+                    />
+                </Pressable>
+
 
                 {/* Right actions */}
                 <View style={tw`flex-row`}>
@@ -96,8 +102,33 @@ const Index = () => {
                     Groups
                 </Text>
             </View>
-            <View>
-                <Text>Groups</Text>
+            <View style={tw`flex-1`}>
+                {/* Absolute top button */}
+                <View style={tw`absolute top-147 left-0 right-0 items-center z-10`}>
+                    <Pressable
+                        style={[
+                            tw`px-4 py-4 rounded-full flex-row items-center justify-center`,
+                            {
+                                width: "90%",
+                                backgroundColor: colors.primary,
+                            },
+                        ]}
+                    >
+                        <Ionicons
+                            name="add"
+                            size={28}
+                            color={colors.primaryText}
+                        />
+                        <Text
+                            style={[
+                                tw`ml-2 text-base font-bold`,
+                                { color: colors.primaryText },
+                            ]}
+                        >
+                            Create New Group
+                        </Text>
+                    </Pressable>
+                </View>
             </View>
         </View>
     );
