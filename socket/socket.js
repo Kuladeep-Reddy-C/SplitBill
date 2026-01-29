@@ -51,6 +51,17 @@ io.on("connection", (socket) => {
         });
     });
 
+    socket.on("feast:draft-created", ({ groupId, feastId, createdBy }) => {
+        const room = `group:${groupId}`;
+
+        console.log("🟢 SERVER draft feast created", feastId);
+
+        io.to(room).emit("feast:draft-created", {
+            feastId,
+            createdBy,
+            time: Date.now(),
+        });
+    });
 
 
     socket.on("chat:message", (payload) => {

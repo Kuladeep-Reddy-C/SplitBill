@@ -113,7 +113,7 @@ const GroupSchema = new mongoose.Schema(
 
                 status: {
                     type: String,
-                    enum: ["open", "settled"],
+                    enum: ["open", "settled", "draft"],
                     default: "open",
                 },
 

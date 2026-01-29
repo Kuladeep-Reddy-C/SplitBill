@@ -14,6 +14,47 @@ import Group from '../models/group.model.js';
 
 const router = express.Router();
 
+// 🟡 CREATE DRAFT FEAST
+// POST /api/groups/:groupId/feasts/draft
+router.post("/:groupId/feasts/draft", async (req, res) => {
+    try {
+        const { groupId } = req.params;
+        const { title = "Draft Feast", createdBy } = req.body;
+
+        const group = await Group.findById(groupId);
+        if (!group) {
+            return res.status(404).json({ error: "Group not found" });
+        }
+
+        const newFeast = {
+            title,
+            createdBy,
+            status: "draft",          // 🔑 IMPORTANT
+            type: "feast",
+            paidBy: [],
+            feastFriends: [],
+            totalAmountFeast: 0,
+            adjustmentAmount: 0,
+        };
+
+        group.feasts.push(newFeast);
+        await group.save();
+
+        // get the last pushed feast
+        const feast =
+            group.feasts[group.feasts.length - 1];
+
+        res.json({
+            success: true,
+            feastId: feast.feastId,
+            feast,
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to create draft feast" });
+    }
+});
+
 router.get("/:groupId/feasts", async (req, res) => {
     try {
         const group = await Group.findById(req.params.groupId)

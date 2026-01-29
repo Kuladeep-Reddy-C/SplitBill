@@ -17,10 +17,10 @@ import { useUser } from "@clerk/clerk-expo";
 
 const sortFeasts = (list) => {
     return [...list].sort((a, b) => {
-        if (a.isActive === b.isActive) {
+        if (a.status === b.status) {
             return new Date(b.updatedAt) - new Date(a.updatedAt);
         }
-        return a.isActive ? -1 : 1;
+        return a.status ? -1 : 1;
     });
 };
 
@@ -56,6 +56,7 @@ const GroupDetails = () => {
                 const res = await fetch(`${BACKEND_URL}/api/groups/${groupId}/feasts`);
                 const data = await res.json();
                 setFeasts(sortFeasts(data));
+                console.log(data)
             } catch (e) {
                 console.log("Failed to fetch feasts", e);
             }
@@ -83,17 +84,17 @@ const GroupDetails = () => {
             setFeasts((prev) =>
                 sortFeasts(
                     prev.map((f) =>
-                        f._id === feastId ? { ...f, isActive: true } : f
+                        f._id === feastId ? { ...f, status: true } : f
                     )
                 )
             );
         });
 
-        socket.on("feast:status-updated", ({ feastId, isActive }) => {
+        socket.on("feast:status-updated", ({ feastId, status }) => {
             setFeasts((prev) =>
                 sortFeasts(
                     prev.map((f) =>
-                        f._id === feastId ? { ...f, isActive } : f
+                        f._id === feastId ? { ...f, status } : f
                     )
                 )
             );
@@ -139,6 +140,18 @@ const GroupDetails = () => {
         fetchProfiles();
     }, [group]);
 
+    useEffect(() => {
+        socket.on("feast:draft-created", (data) => {
+            console.log("🟢 Draft feast appeared", data);
+
+            // optional: refetch feasts
+            // or optimistically add to UI
+        });
+
+        return () => {
+            socket.off("feast:draft-created");
+        };
+    }, []);
 
     if (loading) {
         return (
@@ -330,26 +343,41 @@ const GroupDetails = () => {
                         feasts.map((feast) => (
                             <Pressable
                                 key={feast._id}
-                                onPress={() => router.push(`/group/${groupId}/feast/${feast._id}`)}
+                                onPress={() => {
+                                    if (feast.status === "draft") {
+                                        // 🔴 Draft → live collaboration page
+                                        router.push({
+                                            pathname: `/group/${groupId}/add-feast`,
+                                            params: { feastId: feast._id },
+                                        });
+                                    } else {
+                                        // 🟢 Open / settled → read-only details page
+                                        router.push({
+                                            pathname: `/group/${groupId}/feast/${feast._id}`,
+                                        });
+                                    }
+                                }}
                                 style={[
                                     tw`mb-3 rounded-xl p-4 flex-row items-center justify-between`,
                                     {
-                                        backgroundColor: feast.isActive
-                                            ? colors.primarySoft
-                                            : colors.surface,
+                                        backgroundColor:
+                                            feast.status === "draft"
+                                                ? colors.surface
+                                                : colors.primarySoft,
                                         borderWidth: 1,
-                                        borderColor: feast.isActive
-                                            ? colors.primary
-                                            : colors.border,
+                                        borderColor:
+                                            feast.status === "draft"
+                                                ? colors.border
+                                                : colors.primary,
                                     },
                                 ]}
                             >
                                 <View>
                                     <Text style={[tw`font-bold`, { color: colors.textPrimary }]}>
-                                        {feast.name}
+                                        {feast.title}
                                     </Text>
 
-                                    {feast.isActive && (
+                                    {feast.status && (
                                         <Text style={[tw`text-xs mt-1`, { color: colors.primary }]}>
                                             ● Active now
                                         </Text>
@@ -394,7 +422,45 @@ const GroupDetails = () => {
                 <View style={tw`w-3`} />
 
                 <Pressable
-                    onPress={() => router.push(`/group/${groupId}/add-feast`)}
+                    onPress={async () => {
+                        try {
+                            const res = await fetch(
+                                `${BACKEND_URL}/api/groups/${groupId}/feasts/draft`,
+                                {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                    },
+                                    body: JSON.stringify({
+                                        createdBy: user.id,
+                                        title: "Draft Feast",
+                                    }),
+                                }
+                            );
+
+                            const data = await res.json();
+                            if (!data.success) {
+                                throw new Error("Failed to create feast");
+                            }
+
+                            const feastId = data.feastId;
+
+                            // 2️⃣ Notify group members (socket)
+                            socket.emit("feast:draft-created", {
+                                groupId,
+                                feastId,
+                                createdBy: user.id,
+                            });
+
+                            // 3️⃣ Navigate to AddFeast page WITH feastId
+                            router.push({
+                                pathname: `/group/${groupId}/add-feast`,
+                                params: { feastId },
+                            });
+                        } catch (err) {
+                            console.error("Add feast failed", err);
+                        }
+                    }}
                     style={[
                         tw`h-14 rounded-full items-center justify-center`,
                         {
